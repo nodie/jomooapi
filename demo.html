@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试展示</title>
+    <script src="lib/jquery.min.js"></script>
+</head>
+<body>
+    <div class="content" style="width: 100%;">
+        <table style="width: 100%; text-align: center; border-collapse:collapse; border-color:blue;" border="1" >
+            <tr style="height:50px">
+                <th>操作</th>
+                <th>备注</th>
+            </tr>
+            <tr style="height:40px">
+                <td width="400px">
+                    <button class="btn1" style="margin: 5px 5px 5px 5px;">按时间获取订单</button>
+                    <button class="btn2" style="margin: 5px 5px 5px 5px;">按ID获取订单</button>
+                    <button class="btn16" style="margin: 5px 5px 5px 5px;">喵师傅核销状态查询</button>
+                </td>
+                <td>TOP获取订单接口。当天猫消息推送订单后，将无法用"根据时间获取订单"查询已经被推送的订单</td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn3" style="margin: 5px 5px 5px 5px;">派工</button>
+                    <button class="btn4" style="margin: 5px 5px 5px 5px;">预约</button>
+                    <button class="btn5" style="margin: 5px 5px 5px 5px;">挂起</button>
+                    <button class="btn6" style="margin: 5px 5px 5px 5px;">无需安装反馈</button>
+                </td>
+                <td>MSF订单状态反馈接口</td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn7" style="margin: 5px 5px 5px 5px;">一键求助单查询</button>
+                    <button class="btn8" style="margin: 5px 5px 5px 5px;">一键求助单备注跟新</button>
+                </td>
+                <td>一键求助单接口</td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn9" style="margin: 5px 5px 5px 5px;">按ID查询结算调整单</button>
+                    <button class="btn10" style="margin: 5px 5px 5px 5px;">按时间查询结算调整单</button>
+                    <button class="btn11" style="margin: 5px 5px 5px 5px;">创建结算调整单</button>
+                    <button class="btn12" style="margin: 5px 5px 5px 5px;">修改结算调整单</button>
+                    <button class="btn13" style="margin: 5px 5px 5px 5px;">取消结算调整单</button>
+                </td>
+                <td>结算调整单接口</td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="btn14" style="margin: 5px 5px 5px 5px;">图片文件上传</button>
+                    <button class="btn15" style="margin: 5px 5px 5px 5px;">服务商工人信息创建</button>
+                </td>
+                <td>师傅信息回传喵师傅接口</td>
+            </tr>
+        </table>
+        <div class="textShow" style="border: 1px solid #000; height: 400px;text-indent: 10px;overflow: auto;margin-top: 10px;"></div>
+    </div>
+    <script>
+
+        $('.btn1').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=getOrderByTime",
+                success: function(msg){
+                    console.log(msg);
+//                    var html = $('.textShow').html();
+//                    if(html == ''){
+//                        html = '<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>';
+//                    }else{
+//                        html += '<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>';
+//                    }
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn2').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=getOrderByParOrderId",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn3').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfReservation",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn4').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfAppointment",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn5').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfPutUp",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn6').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfNoNeedService",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn7').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfGetAnomalyrecourse",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn8').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfUpdAnomalyrecourse",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn9').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfGetSettleadjustmentById",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn10').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfGetSettleadjustmentByTime",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn11').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfCreateSettleadjustment",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn12').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfUpdateSettleadjustment",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn13').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfCancelSettleadjustment",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn14').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfImgUpload",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn15').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfUploadWorker",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+        $('.btn16').on('click', function () {
+            $.ajax({
+                type: "POST",
+                url: "demo.php",
+                data: "opt=msfGetIdentifyStatus",
+                success: function(msg){
+                    $('.textShow').html('<p style="margin: 3px 0px 3px 0px;">'+msg+'</p>');
+                }
+
+            });
+        })
+
+
+
+
+    </script>
+</body>
+</html>
