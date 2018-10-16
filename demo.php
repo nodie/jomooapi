@@ -16,7 +16,10 @@ $sessionKey = "610051923ba253e48bd001a24961bfb2d1b6fdbe116d12b2191428291";
 $opt = $_REQUEST['opt'];
 $jsonStr = jsonStr(); //获取参数
 
-write_log($jsonStr); //记录日志
+$get_data = array(
+    'opt' => $opt,
+    'jsonStr' => $jsonStr,
+);
 
 $c = new TopClient;
 $c->appkey = $appkey;
@@ -293,9 +296,16 @@ switch($opt){
         break;
 
     default:
+        $resp = array();
         break;
 }
 
+$put_data = json_decode(json_encode($resp), true);
+$log_data = array(
+    'get' => $get_data,
+    'put' => $put_data,
+);
+write_log($log_data); //记录日志
 
 //获取参数
 function jsonStr() {
@@ -313,7 +323,9 @@ function jsonStr() {
 function write_log($data = array(), $filename = '')
 {
     if (is_array($data)) {
+        $data = setData($data);
         $data = json_encode($data);
+        $data = urldecode($data);
     }
 
     $str = sprintf("[%s] %s:", date("Y-m-d H:i:s"), $_SERVER['HTTP_USER_AGENT']) . PHP_EOL;
@@ -323,7 +335,7 @@ function write_log($data = array(), $filename = '')
         $filename = 'sys.log';
     }
 
-    $dir = __DIR__ . 'Log/' . date('Y/m/d/');
+    $dir = __DIR__ . '/Log/' . date('Y/m/d/H/');
     mkdirs($dir);
     $logFilePath = $dir . $filename;
     if ($fp = fopen($logFilePath, 'a')) {
@@ -349,6 +361,23 @@ function mkdirs($dir, $mode = 0755)
     } 
 
     return @mkdir($dir, $mode);
+}
+
+//处理中文
+function setData($data = array()) {
+    if (is_array($data)) {
+        foreach ($data as $key => $row) {
+            $data[$key] = setData($row);
+        }
+
+        return $data;
+    } else {
+        if ($data !== false && $data !== true) {
+            return urlencode($data);
+        } else {
+            return $data;
+        }
+    }
 }
 
 ?>
