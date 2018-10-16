@@ -1,7 +1,13 @@
 <?php
 
+header("Content-Type: text/html; charset=UTF-8");
+ini_set("display_errors", "Off");
+error_reporting(E_ALL | E_STRICT);
+
 include "TopSdk.php";
 date_default_timezone_set('Asia/Shanghai');
+
+!defined('AccessSecret') && define('AccessSecret', "123456");
 
 //九牧正式
 $appkey = "25040227";
@@ -12,6 +18,55 @@ $sessionKey = "610051923ba253e48bd001a24961bfb2d1b6fdbe116d12b2191428291";
 //$appkey = "24736278";
 //$secret = "fcbc17d510a9d586739b83ce159a1887";
 //$sessionKey = "6201b08fca6dd307ZZ53208608bc288444605bfbf8190f62468433189";
+
+//签名验证
+if (isset($_GET['AccessKeyId']) 
+    && isset($_GET['Timestamp']) 
+    && isset($_GET['SignatureNonce']) 
+    && isset($_GET['Signature'])) {
+    $signature_data = array(
+        'AccessKeyId' => trim($_GET['AccessKeyId']),
+        'Timestamp' => trim($_GET['Timestamp']),
+        'SignatureNonce' => trim($_GET['SignatureNonce']),
+    );
+    $Signature = $_GET['Signature'];
+
+    if (signature($signature_data) != $Signature) {
+        header('Status: 403 Forbidden');
+
+        $signature_data['Signature'] = $Signature;
+        $log_data = array(
+            'msg' => '验签失败',
+            'signature' => $signature_data,
+        );
+        write_log($log_data); //记录日志
+        exit('验签失败');
+    } else {
+        $signature_data['Signature'] = $Signature;
+    }
+} else {
+    header('Status: 403 Forbidden');
+
+    $log_data = array(
+        'msg' => '非法请求',
+        'server' => array(
+            $_SERVER['SERVER_PROTOCOL'],
+            $_SERVER['HTTP_ACCEPT'],
+            $_SERVER['REQUEST_METHOD'],
+            $_SERVER['HTTP_ACCEPT_ENCODING'],
+            $_SERVER['HTTP_ACCEPT_LANGUAGE'],
+            $_SERVER['SERVER_SOFTWARE'],
+            $_SERVER['GATEWAY_INTERFACE'],
+            $_SERVER['REMOTE_ADDR'],
+            $_SERVER['QUERY_STRING'],
+            $_SERVER['HTTP_USER_AGENT'],
+            $_SERVER['REQUEST_TIME'],
+        ),
+    );
+
+    write_log($log_data); //记录日志
+    exit('非法请求');
+}
 
 $opt = $_REQUEST['opt'];
 $jsonStr = jsonStr(); //获取参数
@@ -29,9 +84,12 @@ switch($opt){
     //查询任务类工单信息 按时间查询 [ tmall.servicecenter.tasks.search ]
     //http://open.taobao.com/api.htm?docId=11122&docType=2
     case "getOrderByTime":
+        $start = $jsonStr['start'] . '000';
+        $end = $jsonStr['end'] . '000';
+
         $req = new TmallServicecenterTasksSearchRequest;
-        $req->setStart($jsonStr['start']);
-        $req->setEnd($jsonStr['end']);
+        $req->setStart($start);
+        $req->setEnd($end);
         $resp = $c->execute($req, $sessionKey);
         echo "<pre>";
         print_r($resp);
@@ -111,7 +169,7 @@ switch($opt){
     //喵师傅用 图片文件上传 [ tmall.servicecenter.picture.upload ]
     //
     case "msfImgUpload":
-        $img_data = file_get_contents('php://input') ? file_get_contents('php://input') : gzuncompress($GLOBALS['HTTP_RAW_POST_DATA']); //二进制数据流
+        $img_data = file_get_contents($_FILES['img']['tmp_name']);
         $picture_name = $jsonStr['picture_name'];
 
         $path = "/Upload/";
@@ -259,7 +317,7 @@ switch($opt){
         $price_factors->name = $jsonStr['price_factors']['name'];
         $price_factors->value = $jsonStr['price_factors']['value'];
         $price_factors->desc = $jsonStr['price_factors']['desc'];
-        $param_settle_adjustment_request->PriceFactors = $price_factors;
+        $param_settle_adjustment_request->price_factors = $price_factors;
         $param_settle_adjustment_request->type = $jsonStr['type'];
         $req->setParamSettleAdjustmentRequest(json_encode($param_settle_adjustment_request));
         $resp = $c->execute($req, $sessionKey);
@@ -320,6 +378,7 @@ switch($opt){
 
 $put_data = json_decode(json_encode($resp), true);
 $log_data = array(
+    'signature' => $signature_data,
     'get' => $get_data,
     'put' => $put_data,
 );
@@ -331,7 +390,7 @@ function jsonStr() {
         return NULL;
     }
 
-    $jsonStr = urldecode($_GET['jsonStr']);
+    $jsonStr = $_GET['jsonStr'];
     $jsonStr = preg_replace("/\\\\\"/i", '"', $jsonStr);
 
     return json_decode($jsonStr, true);
@@ -442,6 +501,22 @@ function makeFile($path = "")
     } else {
         return false;
     }
+}
+
+//签名
+function signature($data) {
+    $str = AccessSecret;
+
+    ksort($data); //根据键，以升序对
+
+    foreach ($data as $key => $value) {
+        $str .= "&" . $key . "=" . $value;
+    }
+
+    $str = md5($str);
+    $str = base64_encode($str);
+
+    return $str;
 }
 
 ?>
