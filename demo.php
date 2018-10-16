@@ -111,9 +111,35 @@ switch($opt){
     //喵师傅用 图片文件上传 [ tmall.servicecenter.picture.upload ]
     //
     case "msfImgUpload":
+        $img_data = file_get_contents('php://input') ? file_get_contents('php://input') : gzuncompress($GLOBALS['HTTP_RAW_POST_DATA']); //二进制数据流
+        $picture_name = $jsonStr['picture_name'];
+
+        $path = "/Upload/";
+        $dir = __DIR__ . $path;
+        $name = pathinfo($picture_name, PATHINFO_FILENAME);
+
+        //创建目录
+        $upFileName = date('Ymd') . '/';
+        makeFile($dir . $upFileName);
+
+        $ext = pathinfo($picture_name, PATHINFO_EXTENSION);
+        $fileName = md5($picture_name . rand());
+        for($i=0;; $i++) {
+            if (file_exists($dir . $upFileName . $fileName . '.' . $ext)) {
+                $fileName = md5($value . rand());
+            } else {
+                break;
+            }
+        }
+
+        $uploadFile = $upFileName . $fileName . '.' . $ext;
+        $uploadFilePath = $dir . $upFileName . $fileName . '.' . $ext;
+        file_put_contents($uploadFilePath, $img_data);
+        $get_data['jsonStr']['img'] = $path . $uploadFile;
+
         $req = new TmallServicecenterPictureUploadRequest;
         //附件上传的机制参见PHP CURL文档，在文件路径前加@符号即可
-        $req->setImg("@" . $jsonStr['img']);
+        $req->setImg("@" . $uploadFilePath);
         $req->setPictureName($jsonStr['picture_name']);
         $req->setIsHttps($jsonStr['is_https']);
         $resp = $c->execute($req, $sessionKey);
@@ -328,31 +354,12 @@ function write_log($data = array(), $filename = '')
     }
 
     $dir = __DIR__ . '/Log/' . date('Y/m/d/H/');
-    mkdirs($dir);
+    makeFile($dir);
     $logFilePath = $dir . $filename;
     if ($fp = fopen($logFilePath, 'a')) {
         fwrite($fp,  $str);
         fclose($fp);
     }
-}
-
-/**
- * @desc 创建目录
- * @param $dir
- * @param int $mode
- * @return bool
- */
-function mkdirs($dir, $mode = 0755)
-{
-    if (is_dir($dir) || @mkdir($dir, $mode)) {
-        return TRUE;
-    }
-
-    if (!mkdirs(dirname($dir), $mode)) {
-        return FALSE;
-    } 
-
-    return @mkdir($dir, $mode);
 }
 
 //处理中文
@@ -369,6 +376,71 @@ function setData($data = array()) {
         } else {
             return $data;
         }
+    }
+}
+
+/**
+ * Create new file
+ *
+ * @param string $path
+ * @return boolean
+ */
+function makeFile($path = "")
+{
+    $path = trim($path);
+    if (!$path) {
+        return false;
+    }
+
+    $path = preg_replace("/\\\\/", "/", $path);
+
+    $filename = substr($path, strripos($path, "/") + 1);
+    $ext = substr($filename, strripos($filename, ".") + 1);
+    if (!$ext) {
+        $filename = "";
+    }
+
+    $dirPathInfo = explode("/{$filename}", $path);
+    array_pop($dirPathInfo);
+    $dirPath = implode("/", $dirPathInfo);
+
+    if ($filename) {
+        if (is_dir($path)) {
+            return false;
+        }
+
+        if (file_exists($path)) {
+            return true;
+        }
+    } else {
+        if (is_dir($path)) {
+            return true;
+        }
+    }
+
+    // make dir
+    if (!is_dir($dirPath)) {
+        if (file_exists($dirPath)) {
+            return false;
+        }
+
+        if (!@mkdir($dirPath, 0777, true)) {
+            if (!is_dir($dirPath)) {
+                return false;
+            }
+        }
+    }
+
+    // make file
+    if ($filename) {
+        $handle = fopen($path, 'a');
+        fclose($handle);
+    }
+
+    if (file_exists($path)) {
+        return true;
+    } else {
+        return false;
     }
 }
 
