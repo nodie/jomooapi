@@ -29,12 +29,9 @@ switch($opt){
     //查询任务类工单信息 按时间查询 [ tmall.servicecenter.tasks.search ]
     //http://open.taobao.com/api.htm?docId=11122&docType=2
     case "getOrderByTime":
-        $time = strval($jsonStr['end']);
-        $starttime = strval($jsonStr['start']);
-
         $req = new TmallServicecenterTasksSearchRequest;
-        $req->setStart($starttime);
-        $req->setEnd($time);
+        $req->setStart($jsonStr['start']);
+        $req->setEnd($jsonStr['end']);
         $resp = $c->execute($req, $sessionKey);
         echo "<pre>";
         print_r($resp);
@@ -45,8 +42,7 @@ switch($opt){
     case "getOrderByParOrderId":
         $req = new TmallServicecenterTaskGetRequest;
 
-        $parent_biz_order_id = $jsonStr['parent_biz_order_id'];
-        $req->setParentBizOrderId($parent_biz_order_id);
+        $req->setParentBizOrderId($jsonStr['parent_biz_order_id']);
         $resp = $c->execute($req, $sessionKey);
         echo "<pre>";
         print_r($resp);
@@ -61,7 +57,7 @@ switch($opt){
 
         $reserv_info->outer_id = $jsonStr['outer_id']; //内部订单号
         $reserv_info->order_ids = $jsonStr['order_ids']; //天猫父订单号列表
-        $reserv_info->service_type = $jsonStr['service_type']; //服务类型，0 家装的送货上门并安装 1 单向安装 2 建材的送货上门 3 建材的安装。统一为3
+        $reserv_info->service_type = "3"; //服务类型，0 家装的送货上门并安装 1 单向安装 2 建材的送货上门 3 建材的安装。统一为3
         $reserv_info->worker_mobile = $jsonStr['worker_mobile']; //预约工人手机号码
         $reserv_info->worker_name = $jsonStr['worker_name']; //工人名称
         $reserv_info->success = "2"; //1成功 0失败
@@ -79,7 +75,7 @@ switch($opt){
         $reserv_info = new ReservationDTO;
         $reserv_info->outer_id = $jsonStr['outer_id']; //内部订单号
         $reserv_info->order_ids = $jsonStr['order_ids']; //天猫父订单号列表
-        $reserv_info->service_type = $jsonStr['service_type']; //服务类型，0 家装的送货上门并安装 1 单向安装 2 建材的送货上门 3 建材的安装。统一为3
+        $reserv_info->service_type = "3"; //服务类型，0 家装的送货上门并安装 1 单向安装 2 建材的送货上门 3 建材的安装。统一为3
         $reserv_info->resv_time = $jsonStr['resv_time']; //预约时间,0:上午,1:下午,2:晚上
         $reserv_info->resv_date = $jsonStr['resv_date']; //预约日期,2015-12-15
         $reserv_info->worker_mobile = $jsonStr['worker_mobile']; //预约工人手机号码
@@ -100,12 +96,12 @@ switch($opt){
         $reserv_info = new ReservationDTO;
         $reserv_info->outer_id = $jsonStr['outer_id']; //内部订单号
         $reserv_info->order_ids = $jsonStr['order_ids']; //天猫父订单号列表
-        $reserv_info->service_type = $jsonStr['service_type']; //服务类型，0 家装的送货上门并安装 1 单向安装 2 建材的送货上门 3 建材的安装。统一为3
+        $reserv_info->service_type = "3"; //服务类型，0 家装的送货上门并安装 1 单向安装 2 建材的送货上门 3 建材的安装。统一为3
         $reserv_info->worker_mobile = $jsonStr['worker_mobile']; //预约工人手机号码
         $reserv_info->worker_name = $jsonStr['worker_name']; //工人名称
         $reserv_info->fail_code = $jsonStr['fail_code']; //1：电话占线/无人接听/电话关机 2：未收到货 3：用户暂不需要安装 4：取消安装 5：电话号码错误
         $reserv_info->next_resv_time = $jsonStr['next_resv_time']; //下次预约时间
-        $reserv_info->success = $jsonStr['success']; //1成功 0失败
+        $reserv_info->success = "2"; //1成功 0失败
         $req->setReservInfo(json_encode($reserv_info));
         $resp = $c->execute($req, $sessionKey);
         echo "<pre>";
@@ -115,15 +111,11 @@ switch($opt){
     //喵师傅用 图片文件上传 [ tmall.servicecenter.picture.upload ]
     //
     case "msfImgUpload":
-        $imgLocation = $jsonStr['img'];
-        $picture_name = $jsonStr['picture_name'];
-        $is_https = $jsonStr['is_https'];
-
         $req = new TmallServicecenterPictureUploadRequest;
         //附件上传的机制参见PHP CURL文档，在文件路径前加@符号即可
-        $req->setImg("@" . $imgLocation);
-        $req->setPictureName($picture_name);
-        $req->setIsHttps($is_https);
+        $req->setImg("@" . $jsonStr['img']);
+        $req->setPictureName($jsonStr['picture_name']);
+        $req->setIsHttps($jsonStr['is_https']);
         $resp = $c->execute($req, $sessionKey);
         echo "<pre>";
         print_r($resp);
@@ -152,7 +144,7 @@ switch($opt){
     case "msfGetIdentifyStatus":
         $req = new TmallMsfIdentifyStatusQueryRequest;
         $req->setOrderId($jsonStr['order_id']);
-        $req->setServiceType($jsonStr['service_type']);
+        $req->setServiceType("3");
         $resp = $c->execute($req, $sessionKey);
         echo "<pre>";
         print_r($resp);
