@@ -131,3 +131,10 @@ demo.php?opt=msfUploadWorker
 	id_card_pic_back: 'https://1.jpg', //身份证反面照
 	id_card_pic: 'https://1.jpg', //身份证正面照
 	handheld_card_pic: 'https://1.jpg' //工人手持身份证照片地址
+
+# 物流流转信息查询
+demo.php?opt=logisticsTraceSearch
+	tid: '1324657987', //淘宝交易号，请勿传非淘宝交易号
+	seller_nick: 'seller', //卖家昵称
+	is_split: '1', //表明是否是拆单，默认值0，1表示拆单
+	sub_tid: '1,2,3', //拆单子订单列表，当is_split=1时，需要传人；对应的数据是：子订单号的列表。

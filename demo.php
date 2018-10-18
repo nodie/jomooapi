@@ -344,29 +344,41 @@ switch($opt){
         //工人居住地址
         $address = new AddressDto;
         //详细地址，街到门牌 [上南路3520弄1号502室]
-        $address->address_detail=$jsonStr['address']['address_detail'];
+        $address->address_detail = $jsonStr['address']['address_detail'];
         //省/市/区/街道 [格式：省，市，区，街道 例子：浙江省,杭州市,西湖区,蒋村街道 . 填写四级地址，若相应层级不存在，则设置为空] [上海 上海市 浦东新区 三林镇]
-        $address->address_names=$jsonStr['address']['address_names'];
+        $address->address_names = $jsonStr['address']['address_names'];
         // $worker_dto->Address = $address;
         $worker_dto->address = $address;
-        $worker_dto->identity_id=$jsonStr['identity_id']; //身份证
-        $worker_dto->name=$jsonStr['name']; //师傅名称
-        $worker_dto->phone=$jsonStr['phone']; //师傅电话 - 龙木
-        $worker_dto->provider_id=$jsonStr['provider_id']; //服务商id
-        $worker_dto->provider_name=$jsonStr['provider_name']; //服务商昵称
-        $worker_dto->register_time=$jsonStr['register_time']; //注册日期
+        $worker_dto->identity_id = $jsonStr['identity_id']; //身份证
+        $worker_dto->name = $jsonStr['name']; //师傅名称
+        $worker_dto->phone = $jsonStr['phone']; //师傅电话 - 龙木
+        $worker_dto->provider_id = $jsonStr['provider_id']; //服务商id
+        $worker_dto->provider_name = $jsonStr['provider_name']; //服务商昵称
+        $worker_dto->register_time = $jsonStr['register_time']; //注册日期
         $service_areas = new DivisionDto; //工人服务地址
         // $service_areas->division_names="上海,上海市,浦东新区,上钢新村|上海,上海市,杨浦区,定海路街道"; //格式：省，市，区，街道 例子：浙江省,杭州市,西湖区,蒋村街道. 多个区域用|分隔
-        $service_areas->division_names=$jsonStr['service_areas']['division_names'];
+        $service_areas->division_names = $jsonStr['service_areas']['division_names'];
         $worker_dto->service_areas = $service_areas;
-        $worker_dto->service_types=$jsonStr['service_types']; //服务能力 [格式：类目id,服务名. 多个服务能力用|分隔，服务类型列表见sheet1]
-        $worker_dto->work_type=$jsonStr['work_type']; //工头类型中的一种：工头、核心工人、普通工人、储备工人
-        $worker_dto->photo=$jsonStr['photo']; //工人照片
-        $worker_dto->id_card_pic_back=$jsonStr['id_card_pic_back']; //身份证反面照
-        $worker_dto->id_card_pic=$jsonStr['id_card_pic']; //身份证正面照
-        $worker_dto->handheld_card_pic=$jsonStr['handheld_card_pic'];  //工人手持身份证照片地址
+        $worker_dto->service_types = $jsonStr['service_types']; //服务能力 [格式：类目id,服务名. 多个服务能力用|分隔，服务类型列表见sheet1]
+        $worker_dto->work_type = $jsonStr['work_type']; //工头类型中的一种：工头、核心工人、普通工人、储备工人
+        $worker_dto->photo = $jsonStr['photo']; //工人照片
+        $worker_dto->id_card_pic_back = $jsonStr['id_card_pic_back']; //身份证反面照
+        $worker_dto->id_card_pic = $jsonStr['id_card_pic']; //身份证正面照
+        $worker_dto->handheld_card_pic = $jsonStr['handheld_card_pic'];  //工人手持身份证照片地址
         $req->setWorkerDto(json_encode($worker_dto));
         $resp = $c->execute($req, $sessionKey);
+        echo "<pre>";
+        print_r($resp);
+        break;
+    //物流流转信息查询 [ taobao.logistics.trace.search ]
+    //
+    case "logisticsTraceSearch":
+        $req = new LogisticsTraceSearchRequest;
+        $req->setTid($jsonStr['tid']);
+        $req->setSellerNick($jsonStr['seller_nick']);
+        $req->setIsSplit($jsonStr['is_split']);
+        $req->setSubTid($jsonStr['sub_tid']);
+        $resp = $c->execute($req);
         echo "<pre>";
         print_r($resp);
         break;
