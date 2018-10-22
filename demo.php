@@ -101,8 +101,6 @@ switch($opt){
         $req->setStart($start);
         $req->setEnd($end);
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //服务供应商通过交易主订单查询其未拉取的任务类工单 [ tmall.servicecenter.task.get ]
@@ -112,8 +110,6 @@ switch($opt){
 
         $req->setParentBizOrderId($jsonStr['parent_biz_order_id']);
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //喵师傅分配工人回传 [ tmall.msf.reservation ]
@@ -131,8 +127,6 @@ switch($opt){
         $reserv_info->success = "2"; //1成功 0失败
         $req->setReservInfo(json_encode($reserv_info));
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //喵师傅预约回传 [ tmall.msf.reservation ]
@@ -151,8 +145,6 @@ switch($opt){
         $reserv_info->success = $jsonStr['success']; //1成功 0失败
         $req->setReservInfo(json_encode($reserv_info));
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //*** 确认success = 0 还是 2  ！！！
@@ -172,8 +164,6 @@ switch($opt){
         $reserv_info->success = "2"; //1成功 0失败
         $req->setReservInfo(json_encode($reserv_info));
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //喵师傅用 图片文件上传 [ tmall.servicecenter.picture.upload ]
@@ -211,8 +201,6 @@ switch($opt){
         $req->setPictureName($jsonStr['picture_name']);
         $req->setIsHttps($jsonStr['is_https']);
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //服务商反馈无需安装工单接口 [ tmall.servicecenter.task.feedbacknoneedservice ]
@@ -229,8 +217,6 @@ switch($opt){
         $param->workcard_id = $jsonStr['workcard_id'];
         $req->setParam(json_encode($param));
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //喵师傅核销状态查询接口 [ tmall.msf.identify.status.query ]
@@ -240,8 +226,6 @@ switch($opt){
         $req->setOrderId($jsonStr['order_id']);
         $req->setServiceType("3");
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //天猫服务平台服务商一键求助单查询 [ tmall.servicecenter.anomalyrecourse.search ]
@@ -251,8 +235,6 @@ switch($opt){
         $req->setStart($jsonStr['start']);
         $req->setEnd($jsonStr['end']);
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //天猫服务平台一键求助单服务商备注更新接口 [ tmall.servicecenter.anomalyrecourse.remark.update ]
@@ -262,8 +244,6 @@ switch($opt){
         $req->setId($jsonStr['id']);
         $req->setRemark($jsonStr['remark']);
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //单个结算调整单数据获取 [ tmall.servicecenter.settleAdjustment.get ]
@@ -272,8 +252,6 @@ switch($opt){
         $req = new TmallServiceSettleadjustmentGetRequest;
         $req->setId($jsonStr['id']);
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //按时间区间获取结算调整单数据 [ tmall.servicecenter.settleAdjustment.search ]
@@ -283,8 +261,6 @@ switch($opt){
         $req->setEndTime($jsonStr['end_time']);
         $req->setStartTime($jsonStr['start_time']);
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //创建结算调整单 [ tmall.servicecenter.settleAdjustment.request ]
@@ -307,8 +283,6 @@ switch($opt){
         $param_settle_adjustment_request->workcard_id = $jsonStr['workcard_id'];
         $req->setParamSettleAdjustmentRequest(json_encode($param_settle_adjustment_request));
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //修改结算调整单 [ tmall.service.settleadjustment.modify ]
@@ -331,8 +305,6 @@ switch($opt){
         $param_settle_adjustment_request->type = $jsonStr['type'];
         $req->setParamSettleAdjustmentRequest(json_encode($param_settle_adjustment_request));
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //单个结算调整单取消 [ tmall.servicecenter.settleAdjustment.cancel ]
@@ -342,8 +314,6 @@ switch($opt){
         $req->setId($jsonStr['id']);
         $req->setComments($jsonStr['comments']);
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     //服务商工人信息创建 [ tmall.servicecenter.worker.create ]
@@ -377,8 +347,6 @@ switch($opt){
         $worker_dto->handheld_card_pic = $jsonStr['handheld_card_pic'];  //工人手持身份证照片地址
         $req->setWorkerDto(json_encode($worker_dto));
         $resp = $c->execute($req, $sessionKey);
-        echo "<pre>";
-        print_r($resp);
         break;
     //物流流转信息查询 [ taobao.logistics.trace.search ]
     //
@@ -389,14 +357,14 @@ switch($opt){
         $req->setIsSplit($jsonStr['is_split']);
         $req->setSubTid($jsonStr['sub_tid']);
         $resp = $c->execute($req);
-        echo "<pre>";
-        print_r($resp);
         break;
 
     default:
         $resp = array();
         break;
 }
+
+echo urldecode(json_encode(setData(json_decode(json_encode($resp), true))));
 
 $put_data = json_decode(json_encode($resp), true);
 $log_data = array(
