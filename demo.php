@@ -40,7 +40,12 @@ if (isset($_GET['AccessKeyId'])
             'signature' => $signature_data,
         );
         write_log($log_data); //记录日志
-        exit('验签失败');
+
+        echo urldecode(json_encode(array(
+            'status' => 403,
+            'msg' => urlencode('验签失败'),
+        )));
+        exit();
     } else {
         $signature_data['Signature'] = $Signature;
     }
@@ -65,7 +70,12 @@ if (isset($_GET['AccessKeyId'])
     );
 
     write_log($log_data); //记录日志
-    exit('非法请求');
+
+    echo urldecode(json_encode(array(
+        'status' => 403,
+        'msg' => urlencode('非法请求'),
+    )));
+    exit();
 }
 
 $opt = $_REQUEST['opt'];
