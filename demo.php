@@ -364,9 +364,9 @@ switch($opt){
         break;
 }
 
-$resp = json_decode(json_encode($resp), true)); //转数组
+$resp = json_decode(json_encode($resp), true); //转数组
 
-echo urldecode(json_encode(setData($resp)); //转JSON
+echo urldecode(json_encode(setData($resp))); //转JSON
 
 $log_data = array(
     'signature' => $signature_data,
