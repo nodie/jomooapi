@@ -364,13 +364,14 @@ switch($opt){
         break;
 }
 
-echo urldecode(json_encode(setData(json_decode(json_encode($resp), true))));
+$resp = json_decode(json_encode($resp), true)); //转数组
 
-$put_data = json_decode(json_encode($resp), true);
+echo urldecode(json_encode(setData($resp)); //转JSON
+
 $log_data = array(
     'signature' => $signature_data,
     'get' => $get_data,
-    'put' => $put_data,
+    'put' => $resp,
 );
 write_log($log_data); //记录日志
 
