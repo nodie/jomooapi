@@ -1,5 +1,4 @@
 <?php
-
 header("Content-Type: text/html; charset=UTF-8");
 ini_set("display_errors", "Off");
 error_reporting(E_ALL | E_STRICT);
@@ -7,7 +6,7 @@ error_reporting(E_ALL | E_STRICT);
 include "TopSdk.php";
 date_default_timezone_set('Asia/Shanghai');
 
-!defined('AccessSecret') && define('AccessSecret', "123456");
+!defined('AccessSecret') && define('AccessSecret', "f379da9b9dc74ae3");
 
 //九牧正式
 $appkey = "25040227";
@@ -19,17 +18,30 @@ $sessionKey = "610051923ba253e48bd001a24961bfb2d1b6fdbe116d12b2191428291";
 //$secret = "fcbc17d510a9d586739b83ce159a1887";
 //$sessionKey = "6201b08fca6dd307ZZ53208608bc288444605bfbf8190f62468433189";
 
+//post body传递参数需要使用下面方法来获取。但取得的是str，貌似无法用json解析
+$param = file_get_contents('php://input', 'r');
+var_dump($param);
+echo "\r\n";
+echo $param->AccessKeyId;
+
+echo "\r\n";
+echo $param['AccessKeyId'];
+$aryParam = urldecode(json_decode($param));
+var_dump($aryParam);
+
+exit;
+
 //签名验证
-if (isset($_GET['AccessKeyId']) 
-    && isset($_GET['Timestamp']) 
-    && isset($_GET['SignatureNonce']) 
-    && isset($_GET['Signature'])) {
+if (isset($aryParam['AccessKeyId']) 
+    && isset($aryParam['Timestamp']) 
+    && isset($aryParam['SignatureNonce']) 
+    && isset($aryParam['Signature'])) {
     $signature_data = array(
-        'AccessKeyId' => trim($_GET['AccessKeyId']),
-        'Timestamp' => trim($_GET['Timestamp']),
-        'SignatureNonce' => trim($_GET['SignatureNonce']),
+        'AccessKeyId' => trim($aryParam['AccessKeyId']),
+        'Timestamp' => trim($aryParam['Timestamp']),
+        'SignatureNonce' => trim($aryParam['SignatureNonce']),
     );
-    $Signature = $_GET['Signature'];
+    $Signature = $aryParam['Signature'];
 
     if (signature($signature_data) != $Signature) {
         header('Status: 403 Forbidden');
@@ -377,11 +389,11 @@ write_log($log_data); //记录日志
 
 //获取参数
 function jsonStr() {
-    if (!isset($_GET['jsonStr'])) {
+    if (!isset($aryParam['jsonStr'])) {
         return NULL;
     }
 
-    $jsonStr = $_GET['jsonStr'];
+    $jsonStr = $aryParam['jsonStr'];
     $jsonStr = preg_replace("/\\\\\"/i", '"', $jsonStr);
 
     return json_decode($jsonStr, true);
