@@ -19,8 +19,9 @@ $sessionKey = "610051923ba253e48bd001a24961bfb2d1b6fdbe116d12b2191428291";
 //$sessionKey = "6201b08fca6dd307ZZ53208608bc288444605bfbf8190f62468433189";
 
 //post body传递参数需要使用下面方法来获取。但取得的是str，貌似无法用json解析
-$param = file_get_contents('php://input', 'r');
-var_dump($param);
+$result = file_get_contents("php://input");
+$result = json_decode($result, true);
+print_r($result);die;
 echo "\r\n";
 echo $param->AccessKeyId;
 
