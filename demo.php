@@ -18,31 +18,19 @@ $sessionKey = "610051923ba253e48bd001a24961bfb2d1b6fdbe116d12b2191428291";
 //$secret = "fcbc17d510a9d586739b83ce159a1887";
 //$sessionKey = "6201b08fca6dd307ZZ53208608bc288444605bfbf8190f62468433189";
 
-//post body传递参数需要使用下面方法来获取。但取得的是str，貌似无法用json解析
-$result = file_get_contents("php://input");
-$result = json_decode($result, true);
-print_r($result);die;
-echo "\r\n";
-echo $param->AccessKeyId;
-
-echo "\r\n";
-echo $param['AccessKeyId'];
-$aryParam = urldecode(json_decode($param));
-var_dump($aryParam);
-
-exit;
+$post = params(); //获取参数
 
 //签名验证
-if (isset($aryParam['AccessKeyId']) 
-    && isset($aryParam['Timestamp']) 
-    && isset($aryParam['SignatureNonce']) 
-    && isset($aryParam['Signature'])) {
+if (isset($post['AccessKeyId']) 
+    && isset($post['Timestamp']) 
+    && isset($post['SignatureNonce']) 
+    && isset($post['Signature'])) {
     $signature_data = array(
-        'AccessKeyId' => trim($aryParam['AccessKeyId']),
-        'Timestamp' => trim($aryParam['Timestamp']),
-        'SignatureNonce' => trim($aryParam['SignatureNonce']),
+        'AccessKeyId' => trim($post['AccessKeyId']),
+        'Timestamp' => trim($post['Timestamp']),
+        'SignatureNonce' => trim($post['SignatureNonce']),
     );
-    $Signature = $aryParam['Signature'];
+    $Signature = $post['Signature'];
 
     if (signature($signature_data) != $Signature) {
         header('Status: 403 Forbidden');
@@ -91,8 +79,8 @@ if (isset($aryParam['AccessKeyId'])
     exit();
 }
 
-$opt = $_REQUEST['opt'];
-$jsonStr = jsonStr(); //获取参数
+$opt = $post['opt'];
+$jsonStr = $post['jsonStr'];
 
 $get_data = array(
     'opt' => $opt,
@@ -389,15 +377,10 @@ $log_data = array(
 write_log($log_data); //记录日志
 
 //获取参数
-function jsonStr() {
-    if (!isset($aryParam['jsonStr'])) {
-        return NULL;
-    }
+function params() {
+    $result = file_get_contents("php://input");
 
-    $jsonStr = $aryParam['jsonStr'];
-    $jsonStr = preg_replace("/\\\\\"/i", '"', $jsonStr);
-
-    return json_decode($jsonStr, true);
+    return json_decode($result, true);
 }
 
 //记录日志
