@@ -32,7 +32,7 @@ if (isset($post['AccessKeyId'])
     );
     $Signature = $post['Signature'];
 
-    if (signature_verification($signature_data, $Signature)) {
+    if (!signature_verification($signature_data, $Signature)) {
         header('Status: 403 Forbidden');
 
         $signature_data['Signature'] = $Signature;
