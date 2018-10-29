@@ -293,33 +293,45 @@ class TopClient
 				$resp = $this->curl($requestUrl, $apiParams);
 
 				//--------------------------------字符串解析
-				// $resp = json_decode($resp, true);
-				// $resp = $resp['tmall_msf_reservation_response'];
-				// if (isset($resp['result']) && $resp['result'] && !json_decode($resp['result'], true)) {
-				// 	$str = preg_replace("/^{|}$/", "", $resp['result']);
-				// 	$str = preg_replace("/, /", ",", $str);
-				// 	$arr = explode(",", $str);
-				// 	foreach ($arr as $key => $value) {
-				// 		$r = explode("=", $value);
+				$resp = json_decode($resp, true);
+				$resp = $resp['tmall_msf_reservation_response'];
+				if (isset($resp['result']) && $resp['result'] && !json_decode($resp['result'], true)) {
+					$str = preg_replace("/^{|}$/", "", $resp['result']);
+					$str = preg_replace("/, /", ",", $str);
+					$str = preg_replace("/: /", ":", $str);
+					$arr = explode(",", $str);
+					foreach ($arr as $key => $value) {
+						$r = explode("=", $value);
+						if (count($r) == 1) {
+							$r = explode(":", reset($r));
+						}
 
-				// 		if (isset($r[1])) {
-				// 			if ($r[1] == 'null') {
-				// 				$r[1] = null;
-				// 			} else if (preg_match("/\d/", $r[1])) {
-				// 				$r[1] = (int) $r[1];
-				// 			}
-				// 		}
+						$r[0] = preg_replace("/^\"|\"$/", "", $r[0]);
 
-				// 		$arr[$r[0]] = $r[1];
+						if (isset($r[1])) {
+							$r[1] = preg_replace("/^\"|\"$/", "", $r[1]);
 
-				// 		unset($arr[$key]);
-				// 	}
+							if ($r[1] == 'null') {
+								$r[1] = null;
+							} else if ($r[1] == 'true') {
+								$r[1] = true;
+							}  else if ($r[1] == 'false') {
+								$r[1] = false;
+							} else if (preg_match("/\d/", $r[1])) {
+								$r[1] = (int) $r[1];
+							}
+						}
 
-				// 	$resp['result'] = $arr;
-				// }
-				// $resp = array('tmall_msf_reservation_response' => $resp);
+						$arr[$r[0]] = $r[1];
 
-				// $resp = json_encode($resp);
+						unset($arr[$key]);
+					}
+
+					$resp['result'] = $arr;
+				}
+				$resp = array('tmall_msf_reservation_response' => $resp);
+
+				$resp = json_encode($resp);
 				//--------------------------------字符串解析
 			}
 		}
