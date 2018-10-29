@@ -291,6 +291,34 @@ class TopClient
 				$resp = $this->curl_with_memory_file($requestUrl, $apiParams, $fileFields);
 			}else{
 				$resp = $this->curl($requestUrl, $apiParams);
+
+				$resp = json_decode($resp, true);
+				$resp = $resp['tmall_msf_reservation_response'];
+				if (isset($resp['result']) && $resp['result'] && !json_decode($resp['result'], true)) {
+					$str = preg_replace("/^{|}$/", "", $resp['result']);
+					$str = preg_replace("/, /", ",", $str);
+					$arr = explode(",", $str);
+					foreach ($arr as $key => $value) {
+						$r = explode("=", $value);
+
+						if (isset($r[1])) {
+							if ($r[1] == 'null') {
+								$r[1] = null;
+							} else if (preg_match("/\d/", $r[1])) {
+								$r[1] = (int) $r[1];
+							}
+						}
+
+						$arr[$r[0]] = $r[1];
+
+						unset($arr[$key]);
+					}
+
+					$resp['result'] = $arr;
+				}
+				$resp = array('tmall_msf_reservation_response' => $resp);
+
+				$resp = json_encode($resp);
 			}
 		}
 		catch (Exception $e)
@@ -345,6 +373,7 @@ class TopClient
 				$resp
 			));
 		}
+
 		return $respObject;
 	}
 
