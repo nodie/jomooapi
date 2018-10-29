@@ -292,6 +292,7 @@ class TopClient
 			}else{
 				$resp = $this->curl($requestUrl, $apiParams);
 
+				//--------------------------------字符串解析
 				$resp = json_decode($resp, true);
 				$resp = $resp['tmall_msf_reservation_response'];
 				if (isset($resp['result']) && $resp['result'] && !json_decode($resp['result'], true)) {
@@ -319,6 +320,7 @@ class TopClient
 				$resp = array('tmall_msf_reservation_response' => $resp);
 
 				$resp = json_encode($resp);
+				//--------------------------------字符串解析
 			}
 		}
 		catch (Exception $e)
