@@ -32,7 +32,7 @@ if (isset($post['AccessKeyId'])
     );
     $Signature = $post['Signature'];
 
-    if (signature($signature_data) != $Signature) {
+    if (signature_verification($signature_data, $Signature)) {
         header('Status: 403 Forbidden');
 
         $signature_data['Signature'] = $Signature;
@@ -490,7 +490,7 @@ function makeFile($path = "")
     }
 }
 
-//签名
+//签名生成
 function signature($data) {
     $str = AccessSecret;
 
@@ -504,6 +504,19 @@ function signature($data) {
     $str = base64_encode($str);
 
     return $str;
+}
+
+//签名验证
+function signature_verification($data = '', $signature = '') {
+    $str = AccessSecret;
+
+    ksort($data); //根据键，以升序对
+
+    foreach ($data as $key => $value) {
+        $str .= "&" . $key . "=" . $value;
+    }
+
+    return md5($str) === base64_decode($signature);
 }
 
 ?>
