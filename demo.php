@@ -6,6 +6,15 @@ error_reporting(E_ALL | E_STRICT);
 include "TopSdk.php";
 date_default_timezone_set('Asia/Shanghai');
 
+/**
+ * Redis Config [requirepass redis@123456]
+ */ 
+!defined('REDIS_ENABLED') && define('REDIS_ENABLED', true);
+!defined('REDIS_HOST') && define('REDIS_HOST', '127.0.0.1');
+!defined('REDIS_PASSWORD') && define('REDIS_PASSWORD', 'baogongpo.cn');
+!defined('REDIS_PORT') && define('REDIS_PORT', '6379');
+!defined('REDIS_DATABASE') && define('REDIS_DATABASE', '0');
+
 !defined('AccessSecret') && define('AccessSecret', "f379da9b9dc74ae3");
 
 //九牧正式
@@ -107,10 +116,14 @@ switch($opt){
     //服务供应商通过交易主订单查询其未拉取的任务类工单 [ tmall.servicecenter.task.get ]
     //
     case "getOrderByParOrderId":
-        $req = new TmallServicecenterTaskGetRequest;
+        $parent_biz_order_id = $jsonStr['parent_biz_order_id'];
+        $resp = get_order_by_redis($parent_biz_order_id);
+        if (!$data) {
+            $req = new TmallServicecenterTaskGetRequest;
 
-        $req->setParentBizOrderId($jsonStr['parent_biz_order_id']);
-        $resp = $c->execute($req, $sessionKey);
+            $req->setParentBizOrderId($parent_biz_order_id);
+            $resp = $c->execute($req, $sessionKey);
+        }
         break;
 
     //喵师傅分配工人回传 [ tmall.msf.reservation ]
@@ -365,7 +378,9 @@ switch($opt){
         break;
 }
 
-$resp = json_decode(json_encode($resp), true); //转数组
+if (!is_array($resp)) {
+    $resp = json_decode(json_encode($resp), true); //转数组
+}
 
 echo urldecode(json_encode(setData($resp))); //转JSON
 
@@ -517,6 +532,46 @@ function signature_verification($data = '', $signature = '') {
     }
 
     return md5($str) === base64_decode($signature);
+}
+
+/**
+ * [get_order_by_redis 获取redis库中的工单状态]
+ * @Author   Lonny
+ * @Email    lonnypeng@baogongpo.com
+ * @DateTime 2018-10-31
+ * @param    string                  $orderid [description]
+ * @return   [type]                           [description]
+ */
+function get_order_by_redis($orderid = '')
+{
+    if (!REDIS_ENABLED) {
+        return NULL;
+    }
+
+    if (!class_exists("Redis")) {
+        return NULL;
+    }
+
+    try {
+        $redis = new \Redis();
+        $redis->pconnect(REDIS_HOST, REDIS_PORT);
+        if (REDIS_PASSWORD !== '') {
+            $redis->auth(REDIS_PASSWORD);
+        }
+        $redis->select(REDIS_DATABASE);
+        $redis->setOption(\Redis::OPT_SERIALIZER, \Redis::SERIALIZER_PHP);
+    } catch (\RedisException $e) {
+        print_r($e);die;
+    }
+
+    if ($redis->exists($orderid)) {
+        return $redis->hGetAll($orderid);
+    }
+
+    $data = $generator();
+    $redis->hMset($orderid, $data);
+
+    return $data;
 }
 
 ?>
