@@ -194,7 +194,7 @@ switch($opt){
         $uploadFile = $upFileName . $fileName . '.' . $ext;
         $uploadFilePath = $dir . $upFileName . $fileName . '.' . $ext;
         file_put_contents($uploadFilePath, $img_data);
-        $get_data['jsonStr']['img'] = $path . $uploadFile;
+        $get_data['jsonStr']['img_path'] = $path . $uploadFile;
 
         $req = new TmallServicecenterPictureUploadRequest;
         //附件上传的机制参见PHP CURL文档，在文件路径前加@符号即可
