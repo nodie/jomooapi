@@ -170,7 +170,7 @@ switch($opt){
     //喵师傅用 图片文件上传 [ tmall.servicecenter.picture.upload ]
     //
     case "msfImgUpload":
-        $img_data = file_get_contents($_FILES['img']['tmp_name']);
+        $img_data = file_get_contents($jsonStr['img_url']);
         $picture_name = $jsonStr['picture_name'];
 
         $path = "/Upload/";
