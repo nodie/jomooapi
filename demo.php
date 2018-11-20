@@ -200,7 +200,7 @@ switch($opt){
         //附件上传的机制参见PHP CURL文档，在文件路径前加@符号即可
         $req->setImg("@" . $uploadFilePath);
         $req->setPictureName($jsonStr['picture_name']);
-        $req->setIsHttps($jsonStr['is_https']);
+        $req->setIsHttps(true);
         $resp = $c->execute($req, $sessionKey);
         break;
 
