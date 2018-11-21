@@ -330,7 +330,7 @@ switch($opt){
         $address->address_detail = $jsonStr['address_detail'];
         //省/市/区/街道 [格式：省，市，区，街道 例子：浙江省,杭州市,西湖区,蒋村街道 . 填写四级地址，若相应层级不存在，则设置为空] [上海 上海市 浦东新区 三林镇]
         // $address->address_names = $jsonStr['address']['address_names'];
-        $address->address_names = $jsonStr['address_names'];
+        $address->address_names = preg_replace("/\//", ",", $jsonStr['address_names']);
         // $worker_dto->Address = $address;
         $worker_dto->address = $address;
         $worker_dto->identity_id = $jsonStr['identity_id']; //身份证
@@ -342,7 +342,7 @@ switch($opt){
         $service_areas = new DivisionDto; //工人服务地址
         // $service_areas->division_names="上海,上海市,浦东新区,上钢新村|上海,上海市,杨浦区,定海路街道"; //格式：省，市，区，街道 例子：浙江省,杭州市,西湖区,蒋村街道. 多个区域用|分隔
         // $service_areas->division_names = $jsonStr['service_areas']['division_names'];
-        $service_areas->division_names = $jsonStr['division_names'];
+        $service_areas->division_names = preg_replace("/\//", ",", $jsonStr['division_names']);
         $worker_dto->service_areas = $service_areas;
         $worker_dto->service_types = $jsonStr['service_types']; //服务能力 [格式：类目id,服务名. 多个服务能力用|分隔，服务类型列表见sheet1]
         $worker_dto->work_type = $jsonStr['work_type']; //工头类型中的一种：工头、核心工人、普通工人、储备工人
