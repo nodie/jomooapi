@@ -171,7 +171,7 @@ switch($opt){
     //喵师傅用 图片文件上传 [ tmall.servicecenter.picture.upload ]
     //
     case "msfImgUpload":
-        $img_data = file_get_contents($_FILES['img']['tmp_name']);
+        $img_data = file_get_contents($jsonStr['img_url']);
         $picture_name = $jsonStr['picture_name'];
 
         $path = "/Upload/";
@@ -195,14 +195,15 @@ switch($opt){
         $uploadFile = $upFileName . $fileName . '.' . $ext;
         $uploadFilePath = $dir . $upFileName . $fileName . '.' . $ext;
         file_put_contents($uploadFilePath, $img_data);
-        $get_data['jsonStr']['img'] = $path . $uploadFile;
+        $get_data['jsonStr']['img_path'] = $path . $uploadFile;
 
         $req = new TmallServicecenterPictureUploadRequest;
         //附件上传的机制参见PHP CURL文档，在文件路径前加@符号即可
         $req->setImg("@" . $uploadFilePath);
         $req->setPictureName($jsonStr['picture_name']);
-        $req->setIsHttps($jsonStr['is_https']);
-        $resp = $c->execute($Upload, $sessionKey);
+        $req->setIsHttps("true");
+
+        $resp = $c->execute($req, $sessionKey);
         break;
 
     //服务商反馈无需安装工单接口 [ tmall.servicecenter.task.feedbacknoneedservice ]
@@ -328,7 +329,7 @@ switch($opt){
         //详细地址，街到门牌 [上南路3520弄1号502室]
         $address->address_detail = $jsonStr['address']['address_detail'];
         //省/市/区/街道 [格式：省，市，区，街道 例子：浙江省,杭州市,西湖区,蒋村街道 . 填写四级地址，若相应层级不存在，则设置为空] [上海 上海市 浦东新区 三林镇]
-        $address->address_names = $jsonStr['address']['address_names'];
+        $address->address_names = explode("/", $jsonStr['address']['address_names']);
         // $worker_dto->Address = $address;
         $worker_dto->address = $address;
         $worker_dto->identity_id = $jsonStr['identity_id']; //身份证
@@ -339,7 +340,7 @@ switch($opt){
         $worker_dto->register_time = $jsonStr['register_time']; //注册日期
         $service_areas = new DivisionDto; //工人服务地址
         // $service_areas->division_names="上海,上海市,浦东新区,上钢新村|上海,上海市,杨浦区,定海路街道"; //格式：省，市，区，街道 例子：浙江省,杭州市,西湖区,蒋村街道. 多个区域用|分隔
-        $service_areas->division_names = $jsonStr['service_areas']['division_names'];
+        $service_areas->division_names = explode("/", $jsonStr['service_areas']['division_names']);
         $worker_dto->service_areas = $service_areas;
         $worker_dto->service_types = $jsonStr['service_types']; //服务能力 [格式：类目id,服务名. 多个服务能力用|分隔，服务类型列表见sheet1]
         $worker_dto->work_type = $jsonStr['work_type']; //工头类型中的一种：工头、核心工人、普通工人、储备工人
