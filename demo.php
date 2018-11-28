@@ -11,7 +11,8 @@ date_default_timezone_set('Asia/Shanghai');
 //九牧正式
 $appkey = "25040227";
 $secret = "37d5fd8814b73647f07e3dd1126ff03a";
-$sessionKey = "610051923ba253e48bd001a24961bfb2d1b6fdbe116d12b2191428291";
+// $sessionKey = "610051923ba253e48bd001a24961bfb2d1b6fdbe116d12b2191428291";
+$sessionKey = "61001093be1bcf0771ebd051890b956525642df3e29bf582191428291";
 
 //安保客正式
 //$appkey = "24736278";
@@ -201,7 +202,7 @@ switch($opt){
         $req->setImg("@" . $uploadFilePath);
         $req->setPictureName($jsonStr['picture_name']);
         $req->setIsHttps($jsonStr['is_https']);
-        $resp = $c->execute($req, $sessionKey);
+        $resp = $c->execute($Upload, $sessionKey);
         break;
 
     //服务商反馈无需安装工单接口 [ tmall.servicecenter.task.feedbacknoneedservice ]
